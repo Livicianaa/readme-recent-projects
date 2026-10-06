@@ -45,6 +45,7 @@ A GitHub Action that keeps the project cards in your profile README in sync with
 | --- | --- | --- |
 | `username` | repo owner | User whose repos are listed |
 | `limit` | `4` | Number of cards |
+| `pinned` | | Comma-separated repo names that are always shown first, before the most recent ones |
 | `skip` | | Regex of repo names to hide, e.g. `^(test-\|demo-)` |
 | `theme` | `tokyonight` | [github-readme-stats](https://github.com/anuraghazra/github-readme-stats) theme |
 | `card-host` | `https://github-readme-stats.vercel.app` | github-readme-stats instance for the cards; point it at your own deployment if the public one is rate-limited or down |
@@ -58,6 +59,7 @@ Example:
 - uses: Livicianaa/readme-recent-projects@v1
   with:
     limit: 6
+    pinned: "my-best-project"
     skip: "^(test-|demo-)"
     theme: radical
 ```

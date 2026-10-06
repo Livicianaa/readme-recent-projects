@@ -3,6 +3,7 @@ import { appendFile, readFile, writeFile } from "node:fs/promises";
 const env = process.env;
 const USER = env.RRP_USERNAME;
 const LIMIT = Number(env.RRP_LIMIT || 4);
+const PINNED = (env.RRP_PINNED || "").split(",").map((n) => n.trim().toLowerCase()).filter(Boolean);
 const SKIP = env.RRP_SKIP ? new RegExp(env.RRP_SKIP, "i") : null;
 const THEME = env.RRP_THEME || "tokyonight";
 const CARD_HOST = (env.RRP_CARD_HOST || "https://github-readme-stats.vercel.app").replace(/\/+$/, "");
@@ -21,10 +22,14 @@ async function api(path) {
 }
 
 const user = await api(`/users/${USER}`);
-const repos = (await api(`/users/${USER}/repos?sort=pushed&per_page=100`))
-  .filter((r) => !r.fork && !r.archived && r.name.toLowerCase() !== user.login.toLowerCase())
-  .filter((r) => !SKIP || !SKIP.test(r.name))
-  .slice(0, LIMIT);
+const all = (await api(`/users/${USER}/repos?sort=pushed&per_page=100`)).filter(
+  (r) => r.name.toLowerCase() !== user.login.toLowerCase()
+);
+const pinned = PINNED.map((n) => all.find((r) => r.name.toLowerCase() === n)).filter(Boolean);
+const recent = all
+  .filter((r) => !r.fork && !r.archived && !pinned.includes(r))
+  .filter((r) => !SKIP || !SKIP.test(r.name));
+const repos = [...pinned, ...recent].slice(0, LIMIT);
 
 const today = new Date().toISOString().slice(0, 10);
 const cards = repos.map(
