@@ -5,6 +5,7 @@ const USER = env.RRP_USERNAME;
 const LIMIT = Number(env.RRP_LIMIT || 4);
 const SKIP = env.RRP_SKIP ? new RegExp(env.RRP_SKIP, "i") : null;
 const THEME = env.RRP_THEME || "tokyonight";
+const CARD_HOST = (env.RRP_CARD_HOST || "https://github-readme-stats.vercel.app").replace(/\/+$/, "");
 const README = env.RRP_README || "README.md";
 const HEADING = env.RRP_HEADING || "## Recent Projects";
 
@@ -28,7 +29,7 @@ const repos = (await api(`/users/${USER}/repos?sort=pushed&per_page=100`))
 const today = new Date().toISOString().slice(0, 10);
 const cards = repos.map(
   (r) =>
-    `  <a href="${r.html_url}"><img src="https://github-readme-stats.vercel.app/api/pin/?username=${user.login}&repo=${encodeURIComponent(r.name)}&theme=${THEME}&hide_border=true" width="47%" alt="${r.name}"/></a>`
+    `  <a href="${r.html_url}"><img src="${CARD_HOST}/api/pin/?username=${user.login}&repo=${encodeURIComponent(r.name)}&theme=${THEME}&hide_border=true" width="47%" alt="${r.name}"/></a>`
 );
 const rows = [];
 for (let i = 0; i < cards.length; i += 2) rows.push(cards.slice(i, i + 2).join("\n"));
