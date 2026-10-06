@@ -18,6 +18,9 @@ inputs:
   theme:
     description: github-readme-stats theme.
     default: tokyonight
+  card-host:
+    description: github-readme-stats instance used for the cards (use your own deployment if the public one is down).
+    default: https://github-readme-stats.vercel.app
   readme:
     description: Path to the README file.
     default: README.md
@@ -42,6 +45,7 @@ runs:
         RRP_LIMIT: ${{ inputs.limit }}
         RRP_SKIP: ${{ inputs.skip }}
         RRP_THEME: ${{ inputs.theme }}
+        RRP_CARD_HOST: ${{ inputs.card-host }}
         RRP_README: ${{ inputs.readme }}
         RRP_HEADING: ${{ inputs.heading }}
         RRP_TOKEN: ${{ inputs.token }}
