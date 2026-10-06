@@ -1,0 +1,64 @@
+name: README Recent Projects
+description: Keeps your GitHub profile README's project cards up to date and commits daily as you.
+author: Liviciana
+branding:
+  icon: refresh-cw
+  color: blue
+
+inputs:
+  username:
+    description: GitHub username whose repos are listed. Defaults to the repo owner.
+    default: ${{ github.repository_owner }}
+  limit:
+    description: Number of project cards.
+    default: "4"
+  skip:
+    description: Regex of repo names to hide (case-insensitive), e.g. "^(test-|demo-)".
+    default: ""
+  theme:
+    description: github-readme-stats theme.
+    default: tokyonight
+  readme:
+    description: Path to the README file.
+    default: README.md
+  heading:
+    description: Heading used when the markers are missing and the section is appended.
+    default: "## Recent Projects"
+  commit-message:
+    description: Commit message.
+    default: "docs: refresh recent projects"
+  token:
+    description: Token used for the GitHub API.
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - id: update
+      shell: bash
+      run: node "${{ github.action_path }}/src/update.mjs"
+      env:
+        RRP_USERNAME: ${{ inputs.username }}
+        RRP_LIMIT: ${{ inputs.limit }}
+        RRP_SKIP: ${{ inputs.skip }}
+        RRP_THEME: ${{ inputs.theme }}
+        RRP_README: ${{ inputs.readme }}
+        RRP_HEADING: ${{ inputs.heading }}
+        RRP_TOKEN: ${{ inputs.token }}
+
+    - shell: bash
+      env:
+        RRP_README: ${{ inputs.readme }}
+        RRP_LOGIN: ${{ steps.update.outputs.login }}
+        RRP_EMAIL: ${{ steps.update.outputs.email }}
+        RRP_MESSAGE: ${{ inputs.commit-message }}
+      run: |
+        git config user.name "$RRP_LOGIN"
+        git config user.email "$RRP_EMAIL"
+        git add "$RRP_README"
+        if git diff --cached --quiet; then
+          echo "Nothing to commit"
+          exit 0
+        fi
+        git commit -m "$RRP_MESSAGE"
+        git push
