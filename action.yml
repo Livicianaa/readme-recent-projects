@@ -12,6 +12,9 @@ inputs:
   limit:
     description: Number of project cards.
     default: "4"
+  pinned:
+    description: Comma-separated repo names that are always shown first, e.g. "my-best-project,another-one".
+    default: ""
   skip:
     description: Regex of repo names to hide (case-insensitive), e.g. "^(test-|demo-)".
     default: ""
@@ -43,6 +46,7 @@ runs:
       env:
         RRP_USERNAME: ${{ inputs.username }}
         RRP_LIMIT: ${{ inputs.limit }}
+        RRP_PINNED: ${{ inputs.pinned }}
         RRP_SKIP: ${{ inputs.skip }}
         RRP_THEME: ${{ inputs.theme }}
         RRP_CARD_HOST: ${{ inputs.card-host }}
