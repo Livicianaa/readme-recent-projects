@@ -1,22 +1,20 @@
 # readme-recent-projects
 
-GitHub profil README'ndeki proje kartlarını her gün en son çalıştığın repolarla günceller ve commit'i **senin adınla** atar. Böylece hem profilin canlı kalır hem de her gün contribution grafiğine bir kare düşer.
+A GitHub Action that keeps the project cards in your profile README in sync with your most recently pushed repos, and commits the update **as you** every day. Your profile stays fresh and you get a square on your contribution graph each day.
 
-*Keeps the project cards in your GitHub profile README in sync with your most recently pushed repos, committing daily as you.*
+## Setup
 
-## Kurulum
-
-1. Profil reposunu aç (kullanıcı adınla aynı isimli repo, ör. `kullaniciadin/kullaniciadin`).
-2. README'de kartların görünmesini istediğin yere şunu ekle:
+1. Open your profile repo (the repo named after your username, e.g. `yourname/yourname`).
+2. Put these markers wherever you want the cards to appear in your README:
 
    ```html
    <!--RECENT:start-->
    <!--RECENT:end-->
    ```
 
-   Eklemezsen bölüm README'nin sonuna `## Recent Projects` başlığıyla eklenir.
+   If the markers are missing, the section is appended to the end of the README under a `## Recent Projects` heading.
 
-3. `.github/workflows/update-readme.yml` dosyasını oluştur:
+3. Create `.github/workflows/update-readme.yml`:
 
    ```yaml
    name: Update README
@@ -37,45 +35,45 @@ GitHub profil README'ndeki proje kartlarını her gün en son çalıştığın r
          - uses: Livicianaa/readme-recent-projects@v1
    ```
 
-4. Actions sekmesinden **Update README > Run workflow** ile ilk çalıştırmayı elle yap.
+4. Go to **Actions > Update README > Run workflow** to trigger the first run manually.
 
-`17 6 * * *` her gün 06:17 UTC (Türkiye saatiyle 09:17) demek. GitHub zamanlanmış işleri yoğunlukta 10-30 dakika geciktirebilir.
+`17 6 * * *` means every day at 06:17 UTC. GitHub may delay scheduled runs by 10-30 minutes during busy periods.
 
-## Ayarlar
+## Inputs
 
-| Input | Varsayılan | Açıklama |
+| Input | Default | Description |
 | --- | --- | --- |
-| `username` | repo sahibi | Repoları listelenecek kullanıcı |
-| `limit` | `4` | Kart sayısı |
-| `skip` | | Gizlenecek repo isimleri için regex, ör. `^(test-\|demo-)` |
-| `theme` | `tokyonight` | [github-readme-stats](https://github.com/anuraghazra/github-readme-stats) teması |
-| `readme` | `README.md` | README yolu |
-| `heading` | `## Recent Projects` | İşaretler yoksa eklenecek başlık |
-| `commit-message` | `docs: refresh recent projects` | Commit mesajı |
+| `username` | repo owner | User whose repos are listed |
+| `limit` | `4` | Number of cards |
+| `skip` | | Regex of repo names to hide, e.g. `^(test-\|demo-)` |
+| `theme` | `tokyonight` | [github-readme-stats](https://github.com/anuraghazra/github-readme-stats) theme |
+| `readme` | `README.md` | Path to the README |
+| `heading` | `## Recent Projects` | Heading used when the markers are missing |
+| `commit-message` | `docs: refresh recent projects` | Commit message |
 
-Örnek:
+Example:
 
 ```yaml
 - uses: Livicianaa/readme-recent-projects@v1
   with:
     limit: 6
-    skip: "^(ornek-|test-)"
+    skip: "^(test-|demo-)"
     theme: radical
 ```
 
-## Nasıl çalışır
+## How it works
 
-- Public, fork olmayan ve arşivlenmemiş repoları son push tarihine göre sıralar; profil reposunun kendisini atlar.
-- Kartları 2'li sıralar halinde `<!--RECENT:start-->` ile `<!--RECENT:end-->` arasına yazar.
-- Bloğa görünmeyen bir tarih yorumu koyar, bu yüzden her gün bir değişiklik ve bir commit oluşur.
-- Commit, hesabının noreply adresiyle (`ID+kullaniciadi@users.noreply.github.com`) atılır. Bot adıyla atılan commit'ler contribution grafiğine sayılmaz, bu sayılır.
+- Lists your public repos that are not forks or archived, sorted by last push, and skips the profile repo itself.
+- Writes the cards in rows of two between `<!--RECENT:start-->` and `<!--RECENT:end-->`. Nothing else in your README is touched.
+- Adds a hidden date comment to the block, so there is a change and a commit every day.
+- Commits with your account's noreply address (`ID+username@users.noreply.github.com`). Commits made as a bot do not count toward your contribution graph; these do.
 
-## Sorun giderme
+## Troubleshooting
 
-- **Push reddedildi (403):** workflow'da `permissions: contents: write` olduğundan emin ol.
-- **Workflow durdu:** GitHub 60 gün hiç hareket olmayan public repolarda zamanlanmış işleri kapatır. Actions sekmesinden **Enable workflow** ile tekrar aç.
-- **Kart "Something went wrong" diyor:** repo private ya da silinmiş; `skip` ile gizle.
+- **Push rejected (403):** make sure the workflow has `permissions: contents: write`.
+- **Workflow stopped running:** GitHub disables scheduled workflows in public repos after 60 days without activity. Re-enable it with **Enable workflow** in the Actions tab.
+- **A card says "Something went wrong":** the repo is private or was deleted; hide it with `skip`.
 
-## Lisans
+## License
 
 MIT. Created by Liviciana.
