@@ -21,7 +21,9 @@ A GitHub Action that keeps the project cards in your profile README in sync with
 
    on:
      schedule:
-       - cron: "17 6 * * *"
+       - cron: "17 3 * * *"
+       - cron: "17 9 * * *"
+       - cron: "17 15 * * *"
      workflow_dispatch:
 
    permissions:
