@@ -37,7 +37,7 @@ A GitHub Action that keeps the project cards in your profile README in sync with
 
 4. Go to **Actions > Update README > Run workflow** to trigger the first run manually.
 
-`17 6 * * *` means every day at 06:17 UTC. GitHub may delay scheduled runs by 10-30 minutes during busy periods.
+Times are in UTC. GitHub can delay scheduled runs by hours or skip them entirely when it is busy, so the example schedules three runs a day. The first one that runs makes the daily commit; the others find nothing to change and exit.
 
 ## Inputs
 
